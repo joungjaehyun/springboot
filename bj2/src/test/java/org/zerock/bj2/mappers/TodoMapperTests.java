@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.bj2.dto.TodoDTO;
 
@@ -18,13 +19,14 @@ public class TodoMapperTests {
     private TodoMapper todoMapper;
 
     @Transactional
+    @Commit
     @Test
     public void testInsert(){
 
         Assertions.assertNotNull(todoMapper, "Todo mapper exist");
 
         TodoDTO todoDTO = TodoDTO.builder()
-                            .title("test todo")
+                            .title("테스트 투두(test todo)")
                             .content("Test Content")
                             .writer("user11")
                             .dueDate("2023-06-07")
