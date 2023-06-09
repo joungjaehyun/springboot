@@ -3,6 +3,7 @@ package org.zerock.todo.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zerock.todo.dto.PageRequestDTO;
 import org.zerock.todo.dto.PageResponseDTO;
@@ -28,4 +29,15 @@ public class TodoController {
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
     }
+
+    @GetMapping("/read/{tno}")
+    public String read(@PathVariable("tno") Long tno, PageRequestDTO pageRequestDTO) {
+
+        log.info("read ......");
+        log.info(tno);
+
+        return "/todo/read";
+
+    }
 }
+    
