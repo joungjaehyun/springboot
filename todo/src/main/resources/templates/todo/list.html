@@ -54,7 +54,67 @@
       </div>
     </div>
     <!-- /.card -->
+    <form class="actionForm" action="/todo/list" method="get">
+      <input type="hidden" name="page" value="3">
+      <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+    </form>
+
+
+    <script src = "/js/pageUtil.js"></script>
+
+
 
   </div>
+  <script layout:fragment="script" th:inline="javascript">
+
+    const actionForm = document.querySelector(".actionForm")
+    const pageObj = actionForm.querySelector("input[name='page']")
+    const todoUL = document.querySelector(".todoUL")
+
+    todoUL.addEventListener("click", (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+
+      const target = e.target
+      const pageNum = target.getAttribute("href")
+
+      pageObj.value = pageNum
+      actionForm.setAttribute("action",`/todo/list`)
+      actionForm.submit()
+
+    }, false)
+
+    const {page,size} = [[${pageRequestDTO}]]
+
+    console.log(page,size)
+
+    const {total} = [[${pageResponseDTO}]]
+
+    console.log("total:" + total)
+
+    const pageLIStr = makePages(page, size, total)
+    todoUL.innerHTML = pageLIStr
+
+    const todoTable = document.querySelector(".todoTable")
+    todoTable.addEventListener("click", (e) => {
+
+      const target = e.target
+      if(!target.getAttribute("data-tno")){
+        return
+      }
+      const tno = target.getAttribute("data-tno")
+
+      console.log(tno)
+
+      actionForm.setAttribute("action", `/todo/read/${tno}`)
+      actionForm.submit()
+
+    },false)
+
+
+    
+  </script> 
+
+
 </body>
 </html>
