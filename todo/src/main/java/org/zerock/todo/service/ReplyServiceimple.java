@@ -47,6 +47,7 @@ public class ReplyServiceimple implements ReplyService{
     @Override
     public PageResponseDTO<ReplyDTO> getList(Long tno, PageRequestDTO pageRequestDTO) {
 
+        // 댓글을 보여줄때 100개씩 보여주겠다 표기
         pageRequestDTO.setSize(100);
         
        List<ReplyDTO> list = replyMapper.selectList(tno, pageRequestDTO);
