@@ -12,12 +12,12 @@
 <body>
     <div layout:fragment="content">
         <h1>READ</h1>
-
+        [[${todo}]]
         <ul class="postsDiv">
 
         </ul>
 
-        <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal replyModal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -27,10 +27,12 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input type="text" name="title">
-                        <input type="text" name="author">
+                        <input type="text" name="gno" readonly>
+                        <input type="text" name="reply" value="AAAA">
+                        <input type="text" name="replyer" value="user00">
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-info btnAdd">ADD</button>
                         <button type="button" class="btn btn-danger btnDelete">DELETE</button>
                         <button type="button" class="btn btn-primary btnModify">MODIFY</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -41,6 +43,15 @@
 
         </div>
 
+        <input type="text" name="inputTitle">
+        <input type="text" name="inputAuthor">
+        <button class="submit">등록하기</button>
+        <div>
+            <ul class="replyUL">
+
+            </ul>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script scr="/js/axios.js"></script>
     </div>
@@ -48,109 +59,109 @@
 
 
 
-    <script layout:fragment="script">
+    <script layout:fragment="script" th:inline="javascript">
 
+        const replyModal = new bootstrap.Modal(document.querySelector(".replyModal"))
+        const replyUL = document.querySelector(".replyUL")
 
-        // path를 잡는데 node.js의 서버 포트랑 로컬잡기 또는 ip주소+포트
-        const path = "http://localhost:9090/posts"
-        // Data를 넣을곳 지정
-        const postsDiv = document.querySelector(".postsDiv")
-        const modalDiv = $(".modal")
-        // input영역 설정
-        const inputTitle = document.querySelector('input[name="inputTitle"]')
-        const inputAuthor = document.querySelector('input[name="inputAuthor"]')
-        // postsDiv를 클릭시 modal을 통한 상세 조회
-        postsDiv.addEventListener("click", e => {
-            e.preventDefault()
-            e.stopPropagation()
+        // 모달 관련
+        const gnoInput = document.querySelector("input[name='gno']")
+        const replyInput = document.querySelector("input[name='reply']")
+        const replyerInput = document.querySelector("input[name='replyer']")
 
-            const target = e.target
-            console.log(target)
+        const { tno } = [[${ todo }]]
+        // 댓글 목록
 
-            const pid = target.getAttribute("data-id")
-
-            console.log(pid)
-
-            getPostOne(pid).then(post => {
-                console.log(post)
-                const { id, title, author } = post
-                //modal의 내용물을 변경 
-                document.querySelector('.modal-title').innerHTML = id
-                document.querySelector('input[name="title"]').value = title
-                document.querySelector('input[name="author"]').value = author
-                modalDiv.modal('show')
-            })
-
-        }, false)
-
-        document.querySelector(".btnDelete").addEventListener("click", e => {
-            e.preventDefault()
-            e.stopPropagation()
-            const id = document.querySelector('.modal-title').innerHTML
-
-            deletePostOne(id).then(result => {
-                console.log(result)
-                modalDiv.modal('hide')
-                getDataDefault()
-            })
-
-
-        }, false)
-        // submit를 클릭시 추가 이벤트
-        document.querySelector('.submit').addEventListener('click', (e) => {
-            e.stopPropagation()
-            e.preventDefault()
-
-            const title = inputTitle.value
-            const author = inputAuthor.value
-
-
-
-            addDataPost({ title, author }).then(data => {
-                console.log(data)
-                // input영역의 값을 빈공백으로 만들어줌
-                inputTitle.value = ''
-                inputAuthor.value = ''
-
-            })
-            getDataDefault()
-
-        }, false)
-
-        // btnModify를 클릭시 수정이벤트 
-        document.querySelector('.btnModify').addEventListener('click', (e) => {
-            const id = document.querySelector('.modal-title').innerHTML
-            const title = document.querySelector('input[name="title"]').value
-            const author = document.querySelector('input[name="author"]').value
-
-            modifyPut({ id, title, author }).then(data => {
-                console.log(data)
-                modalDiv.modal('hide')
-                getDataDefault()
-            })
-
-        })
-
-        // 
-        function getDataDefault() {
-            getPosts().then(arr => {
-                let str = ""
-                console.log(arr)
-                for (let i = 0; i < arr.length; i++) {
-                    const { id, title, author } = arr[i]
-                    str += `<li data-id = ${id}>${title}</li>`
-                }
-                console.log(str)
-                postsDiv.innerHTML = str
-            })
+        const getRemoteList = async (pageNum) => {
+            const { data } = await axios.get(`http://localhost:8080/replies/${tno}/list?page=${page}`)
+            return data
         }
 
-        getDataDefault()
+        const postRemoteAdd = async (reply) => {
+            const { data } = await axios.post(`http://localhost:8080/replies/${tno}/new`, reply)
+            return data
+        }
+
+        let page = 1
+
+        // 비동기 테스트
+        //   getRemoteList(page).then(result=>{
+        //     console.log(result)
+        //   })
+
+        // 비동기 등록 테스트
+        const reply = { tno: tno, reply: "Test Reply", replyer: "r1" }
 
 
 
+        const loadReply = async (page, goEnd = false) => {
+
+            const data = await getRemoteList(page)
+
+            console.log("loadReply...............")
+            console.log(data)
+
+            const { list, total } = data
+
+            let str = ""
+
+            for (let i = 0; i < list.length; i++) {
+
+                const { rno, reply, replyer, gno } = list[i]
+
+                str += `<li data-rno=${rno} data-gno=${gno} >${reply} <button>답글</button></li>`
+            }// end for
+            replyUL.innerHTML = str
+        }
+        loadReply(page, true)
+
+        replyUL.addEventListener("click", (e) => {
+            e.stopPropagation()
+            e.preventDefault()
+
+            const target = e.target
+
+            console.dir(target)
+
+            const tag = target.tagName
+
+            if (tat === 'LI') {
+
+            } else if (tag === 'BUTTON') {
+                // 가장가까운 태그 찾을때
+                const liObj = target.closest("li")
+                const gno = liObj.getAttribute("data-gno")
+                gnoInput.value = gno
+
+                replyModal.show()
+
+            }
 
 
+        }, false)
+
+
+        const add = document.querySelector(".btnAdd").addEventListener("click", e=>{
+
+            const reply = {
+                tno:tno,
+                gno:gnoInput.value,
+                reply: replyInput.value,
+                replyer: replyerInput.value
+            }
+
+            console.log(reply)
+            
+            postRemoteAdd(reply)
+            .then(result => {
+                console.log("성공")
+                loadReply(page)
+            }).catch(e => {
+                console.log("실패")
+                console.log(e.response.data)
+            })
+
+        },false)   
 
     </script>
 
