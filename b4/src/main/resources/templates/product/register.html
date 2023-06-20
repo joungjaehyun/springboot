@@ -98,11 +98,29 @@
             const liObj = e.target.closest("li")
 
             console.log(liObj)
+            
+            // POST 방식으로 사용시 js측에선 객체 하나 선언해줌
+            //const param = {fileName: uuid + "_" + fileName}
 
-            axios.delete(`htpp://localhost:8080/removeFile/${uuid}_${fileName}`)
+            axios.delete(`http://localhost:8080/removeFile/${uuid}_${fileName}`)
 
-            //liObj.remove()
+            liObj.remove()
 
+        }
+
+        // beforeunload는 보안상으로 사용자가 아예 못나가게 할 수 있다.
+        // 이방법도 안전하진 않다
+        // 강제종료및 창닫히는 경우는 못막기때문이다. 
+        // 이를 처리하기위해 DB에 실제존재하는지 확인하고 DB에 없으면 삭제
+        // 하지만 실제 DB는 100만건 이상
+        // 대용량 처리를 할때 ⇒ 스프링 배치 (Spring Batch)
+        // 배치는 Crontab(스케쥴러를 이용해 사용한다)
+        // 사용자의 트래픽 가장적은 시간대 오전 6~7
+        // 이런게있다 라는건 알아둬야된다.
+        window.onbeforeunload = function(){
+            console.log("AAAAAAAAAAAAAA")
+            
+            return ''
         }
 
     </script>

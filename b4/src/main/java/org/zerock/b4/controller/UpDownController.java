@@ -112,12 +112,30 @@ public class UpDownController {
         return ResponseEntity.ok().headers(headers).body(resource);
     }
 
-    @DeleteMapping("/removeFile/{fileName}")
+    
     //@RequestBody = JSON 데이터를 RequestFileRemoveDTO로 변환하라고 지칭해줌
+    @DeleteMapping("/removeFile/{fileName}")
     public Map<String,String> removeFile(@PathVariable("fileName") String fileName){
 
         log.info("delete file....");
         log.info(fileName);
+
+        File originFile = new File(uploadPath,fileName);
+
+        // 자바 외부에서 JVM접근시 checkedException
+        try {
+            String mimeType = Files.probeContentType(originFile.toPath());
+
+            if(mimeType.startsWith("image")){
+                File thumbFile = new File(uploadPath, "s_"+fileName);
+                thumbFile.delete();
+            }
+            originFile.delete();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         // JSON 형태로 나가게하기위해서 
         return Map.of("result","success");
