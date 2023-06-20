@@ -24,12 +24,11 @@
         </selectKey>
     </insert>
 
-    <insert id="insertImages">
+     <insert id="insertImages">
         insert into tbl_product_image (uuid,pno,fileName, ord) values
-        <foreach collections="list" item="item"separator=",">
-        (#{item.uuid}, #{item.pno}, #{item.fileName},#{item.ord})
-        </foreach>
-
-    </insert>
+    <foreach collection="list" item="item" separator=",">
+        ( #{item.uuid}, #{item.pno}, #{item.fileName}, #{item.ord} )
+    </foreach>
+    </insert>  
 
 </mapper>
