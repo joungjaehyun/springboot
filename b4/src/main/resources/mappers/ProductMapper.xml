@@ -17,8 +17,19 @@
     </select>
 
     <insert id="insertProduct">
+        insert into tbl_product(pname,price,status)
+        values (#{pname},#{price}, #{status})
+        <selectKey resultType="int" keyProperty="pno" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
+
     <insert id="insertImages">
+        insert into tbl_product_image (uuid,pno,fileName, ord) values
+        <foreach collections="list" item="item"separator=",">
+        (#{item.uuid}, #{item.pno}, #{item.fileName},#{item.ord})
+        </foreach>
+
     </insert>
 
 </mapper>
