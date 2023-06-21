@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.zerock.b4.dto.PageRequestDTO;
 import org.zerock.b4.dto.PageResponseDTO;
+import org.zerock.b4.dto.ProductDTO;
 import org.zerock.b4.dto.ProductListDTO;
 import org.zerock.b4.dto.ProductRegisterDTO;
 import org.zerock.b4.mappers.ProductMapper;
@@ -64,6 +65,21 @@ public class ProductServiceImpl implements ProductService {
         .list(result)
         .total(total)
         .build();
+    }
+
+    @Override
+    public ProductDTO get(Integer pno) {
+
+        
+        
+        return productMapper.selectOne(pno);
+    }
+
+    @Override
+    public List<String> getImage(Integer pno) {
+        
+
+        return productMapper.selectImages(pno);
     }
     
 }
