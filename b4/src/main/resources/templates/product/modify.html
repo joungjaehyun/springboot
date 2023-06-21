@@ -20,6 +20,9 @@
 
     </form>
 
+    <input class="uploadInput" type="file" name="upload" multiple>
+    <button class="uploadBtn">UPLOAD</button>
+
     <div class="uploadDiv">
         <ul class="uploadUL">
 
@@ -55,6 +58,9 @@
 
         const uploadUL = document.querySelector(".uploadUL")
 
+        const uploadBtn = document.querySelector(".uploadBtn")
+        const uploadInput = document.querySelector(".uploadInput")
+
         const loadImages = () => {
 
             axios.get(`http://localhost:8080/product/images/${pno}`)
@@ -73,6 +79,8 @@
                     showProducts(objArr)
                 })
         }
+
+        
 
         const showProducts = (arr) => {
 
@@ -110,6 +118,38 @@
             liObj.remove()
 
         }
+
+        uploadBtn.addEventListener("click", e => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            console.dir(uploadInput.files)
+
+            if (!uploadInput.files || uploadInput.files.length === 0) {
+                return
+            }
+
+            // 메모리상의 폼태그
+            const formData = new FormData()
+
+            for (let i = 0; i < uploadInput.files.length; i++) {
+                formData.append("files", uploadInput.files[i])
+            }
+
+            console.dir(formData)
+
+            const header = { headers: { "Content-Type": "multipart/form-data" } }
+
+            axios.post('http://localhost:8080/upload', formData, header)
+                .then(res => {
+                    const result = res.data
+                    console.log(result)
+                    showProducts(result)
+
+                })
+
+
+        }, false)
 
         loadImages()
 
