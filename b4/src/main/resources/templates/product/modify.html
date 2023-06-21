@@ -73,7 +73,8 @@
                         const fileName = str.substring(37)
                         const link = "s_" + str
 
-                        return {uuid: uuid, fileName: fileName, link:link}
+                        return { uuid, fileName, link}
+                        // return {uuid: uuid, fileName: fileName, link: link}
                     })
                     console.log(objArr)
                     showProducts(objArr)
