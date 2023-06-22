@@ -3,6 +3,7 @@ package org.zerock.b5.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Configuration
 @Log4j2
+@EnableMethodSecurity
 public class CustomSecurityConfig {
 
     @Bean
@@ -27,10 +29,10 @@ public class CustomSecurityConfig {
 
         http.formLogin(Customizer.withDefaults());
        
-        http.authorizeHttpRequests(requests -> {
-            // 모든 요청에 인증을 확인해라
-            requests.anyRequest().authenticated();
-        });
+        // http.authorizeHttpRequests(requests -> {
+        //     // 모든 요청에 인증을 확인해라
+        //     requests.anyRequest().authenticated();
+        // });
 
         return http.build();
     }
