@@ -10,6 +10,7 @@
 <body>
     <h1>Product Modify</h1>
     <!-- 상품 데이터 출력 -->
+    <!-- 원인 -->
     <form class="actionForm" th:action="|/product/modify/${dto.pno}|" method="post">
         <p>
             <input type="text" name="pno" th:value="${dto.pno}">
@@ -24,6 +25,9 @@
             <button class="modBtn">Modify</button>
             <button>Delete</button>
         </p>
+        <div class="uploadHidden">
+
+        </div>
 
     </form>
 
@@ -70,6 +74,7 @@
 
         const modBtn = document.querySelector(".modBtn")
         const actionForm = document.querySelector(".actionForm")
+        const uploadHidden = document.querySelector(".uploadHidden")
 
         modBtn.addEventListener("click", e => {
                 e.preventDefault()
@@ -92,7 +97,7 @@
                     str += `<input type='hidden' name='fileNames' value='${uuid}_${fileName}'>`
                 }
 
-                actionForm.innerHTML += str
+                uploadHidden.innerHTML += str
                 actionForm.submit()
 
             }, false)
