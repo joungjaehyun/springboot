@@ -35,6 +35,8 @@ public class CustomSecurityConfig {
         // rememberMe => 자동로그인
         // 쿠키값이 들어감
         // tokenValiditySeconds -> 쿠기의 유효시간 설정 초단위임
+        // 지금 새창으로 열때는 아예 작동이 안된다 왜냐면
+        // 지금 저장할방법을 안정해놨기때문
         http.rememberMe(config->{
 
             config.tokenValiditySeconds(60*60*24*7);
