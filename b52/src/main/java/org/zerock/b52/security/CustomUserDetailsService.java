@@ -3,7 +3,6 @@ package org.zerock.b52.security;
 import java.util.List;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 실제로 DB에들어간 데이터 쓸예정
         MemberDTO memberDTO = new MemberDTO(
                 username,
-                "$2a$10$yYnBEUb5uGR2QDiMF2.RieO7NCqRexe1Drvq6yt8k6LlNGmWT/P1S",
+                passwordEncoder.encode("1111"),
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         // 더미 유저
