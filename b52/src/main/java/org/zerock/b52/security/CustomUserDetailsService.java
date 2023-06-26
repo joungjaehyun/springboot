@@ -30,7 +30,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         MemberDTO memberDTO = new MemberDTO(
                 username,
                 passwordEncoder.encode("1111"),
-                List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                "키보드 워리어",
+                List.of("USER"));
 
         // 더미 유저
         // UserDetails user = User.builder()
