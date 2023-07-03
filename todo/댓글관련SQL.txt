@@ -1,0 +1,64 @@
+# SQL 대댓글처리용 테이블
+
+## 대댓글을 위한 reply table
+
+create table tbl_reply2 (
+
+rno int auto_increment primary key,
+tno int not null,
+reply varchar(1000) not null,
+replyer varchar(100) not null,
+replyDate timestamp default now(),
+gno int default 0
+
+)
+;
+
+## 순수한 댓글 - tno
+
+insert into tbl_reply2 (tno, reply, replyer)
+values (100, 'R1', 'r1');
+
+update tbl_reply2 set gno = (select last_insert_id()) where rno = 1;
+
+## 1번의 대댓글
+
+insert into tbl_reply2 (tno, reply, replyer, gno)
+values (100, 'R1', 'r1', 1);
+
+select * from tbl_reply2 where tno = 100 order by gno asc;
+
+## 1번의 대댓글 R2-1
+
+insert into tbl_reply2 (tno, reply, replyer, gno)
+values (100, 'R2-1', 'r1', 1);
+
+## 100 글에 대해 순수한 댓글
+
+insert into tbl_reply2 (tno, reply, replyer)
+values (100, '2번째 댓글', 'r1');
+
+update tbl_reply2 set gno = (select last_insert_id()) where rno = 5;
+
+## 5번의 대댓글
+
+insert into tbl_reply2 (tno, reply, replyer, gno)
+values(100, 'R5-1','r1',5);
+
+## 6번의 대댓글
+
+insert into tbl_reply2 (tno, reply, replyer, gno)
+values(100, 'R6-1','r1',5);
+
+## 댓글인지 대댓글인지 확인 할때의 쿼리
+
+## if mysql 판
+
+select
+if(rno = gno, '0','1' )as step, rno, tno, gno, reply ,replyer, replydate
+from tbl_reply2
+where tno = 100 order by gno asc, rno asc
+
+limit 0, 20
+
+ ;

@@ -1,0 +1,97 @@
+## reply table create
+
+create table tbl_reply (
+
+rno int auto_increment primary key,
+
+tno int not null,
+
+reply varchar(1000) not null,
+
+replyer varchar(100) not null,
+
+replyDate timestamp default now()
+
+)
+
+;
+
+select count(*) from tbl_reply;
+
+## data start
+
+insert into tbl_reply (tno, reply,replyer)
+
+(
+
+select tno,
+
+concat('Reply...',tno) reply,
+
+concat('user',mod(tno,10)) replyer
+
+from tbl_todo order by tno desc limit 50,100
+
+)
+
+;
+
+## 재귀복사
+
+insert into tbl_reply (tno, reply,replyer)
+
+(select tno,reply,replyer from tbl_reply);
+
+select * from tbl_reply
+
+where tno >0 and rno > 0
+
+order by tno desc, rno asc;
+
+## index make
+
+create index idx_reply1 on tbl_reply(tno desc, rno asc);
+
+## 2490317
+
+select count(rno) from tbl_reply
+
+where tno =2490317
+
+order by rno asc;
+
+## 오라클에선 에러 => 그룹핑 제외컬럼은 그룹함수화 해야된다.
+
+select tt.tno, tt.title, tt.writer ,count(re.rno)
+
+from tbl_todo tt left outer join tbl_reply re
+
+on re.tno = tt.tno
+
+group by tt.tno
+
+order by tt.tno desc
+
+limit 0, 10
+
+;
+
+## 반정규화 연산을 미리해놓을때 쓰인다.
+
+## DB에서 ',' 가 나오면 테이블로 쪼갠다.
+
+alter table tbl_todo add column (replycnt int default 0);
+
+select * from tbl_todo order by tno desc;
+
+update tbl_todo set replycnt =
+
+(select count(rno) from tbl_reply re where re.tno = tbl_todo.tno )
+
+where tno > 0;
+
+## transaction => all or nothing
+
+## foreign key
+
+alter table tbl_reply add foreign key (tno) references tbl_todo tno
